@@ -32,6 +32,19 @@ class _HomeState extends State<Home> {
   static const platform = const MethodChannel("floating_button");
 
   int count = 0;
+
+  @override
+  void initState() {
+    super.initState();
+
+    platform.setMethodCallHandler((methodCall) async {
+      if (methodCall.method == "touch") {
+        setState(() {
+          count += 1;
+        });
+      }
+    });
+  }
   
   @override
   Widget build(BuildContext context) {
@@ -49,12 +62,17 @@ class _HomeState extends State<Home> {
             ElevatedButton(child: Text("Create"), onPressed: (){
               platform.invokeMethod("create");
             },),
-            ElevatedButton(onPressed: () {
+            ElevatedButton(child: Text("Show"), onPressed: () {
               platform.invokeMethod("show");
-            }, child: Text("Show")),
-            ElevatedButton(onPressed: () {
+            }),
+            ElevatedButton(child: Text("Hide"), onPressed: () {
               platform.invokeMethod("hide");
-            }, child: Text("Hide"))
+            }),
+            ElevatedButton(child: Text("Verify"), onPressed: () {
+              platform.invokeMethod("isShowing").then((isShowing) {
+              print(isShowing);
+            });
+            })
           ],
         )
       ),
